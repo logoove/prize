@@ -51,29 +51,32 @@ return $res;
 
 dump(get_prize());
 
-/**
-* @param $total [你要发的红包总额]
-* @param int $num [发几个]
+/*
+$total 红包总额
+$num 发几个
 $min  最小红包
 */
 function get_hongbao($total, $num = 10,$min = 0.01)
 {
-$wamp = array();
-$returnData = array();
-for ($i = 1; $i < $num; ++$i) {
-$safe_total = ($total - ($num - $i) * $min) / ($num - $i);
-if ($safe_total < 0) break;
-$money = @mt_rand($min * 100, $safe_total * 100) / 100;
+$money_arr = array();
+$return_arr = array();
+for ($i = 1; $i <$num; ++$i) {
+$max =round($total, 2)/($num-$i);
+$random =  0.01+ mt_rand() / mt_getrandmax() * (0.99- 0.01); 
+$money = $random*$max;
+$money = $money<=$min?0.01:$money;
+$money =floor($money*100)/100;
 $total = $total - $money;
-$wamp[$i] = round($money, 2);
+$money_arr[$i] = round($money, 2);
 }
-$wamp[$i] = round($total, 2);
-$returnData['money'] = $wamp;
-$returnData['total'] = array_sum($wamp);
-return $returnData;
+$money_arr[$i] = round($total, 2);
+shuffle($money_arr);
+$return_arr['money'] = $money_arr;
+$return_arr['total'] = array_sum($money_arr);
+return $return_arr;
 }
 
-$data = get_hongbao(10, 50);
+$data = get_hongbao(0.01, 1);
 dump($data);
 
 
